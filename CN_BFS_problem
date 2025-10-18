@@ -1,0 +1,43 @@
+// coding ninja :https://www.naukri.com/code360/problems/bfs-in-graph_973002?count=25&search=BFS&sort_entity=order&sort_order=ASC&leftPanelTabValue=PROBLEM&customSource=studio_nav
+
+#include <bits/stdc++.h> 
+
+
+void BFS(vector<vector<int>> &adj,unordered_map<int,bool> &vis,vector<int> &ans,int node)
+{
+    queue<int> q;
+    q.push(node);
+    vis[node]=1;
+
+    while(!q.empty())
+    {
+        int frontnode=q.front();
+        q.pop();
+
+        ans.push_back(frontnode);
+
+        for(auto i:adj[frontnode])
+        {
+            if(!vis[i])
+            {
+                q.push(i);
+                vis[i]=1;
+            }
+        }
+    }
+}
+vector<int> bfsTraversal(int n, vector<vector<int>> &adj){
+    // Write your code here.
+    vector<int> ans;
+
+    unordered_map<int,bool> vis;
+
+    for(int i=0;i<n;i++)
+    {
+        if(!vis[i])
+        {
+            BFS(adj,vis,ans,i);
+        }
+    }
+    return ans;
+}
