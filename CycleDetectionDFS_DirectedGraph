@@ -1,0 +1,57 @@
+//cycle detection in directed graph using DFS
+
+#include<unordered_map>
+#include<list>
+bool ckcycleDfs(int node,unordered_map<int,bool> &vis,unordered_map<int,bool> &dfsvis,unordered_map<int,list<int>> &adj)
+{
+  vis[node]=true;
+  dfsvis[node]=true;
+  for(auto neigbour:adj[node])
+  {
+    if(!vis[neigbour])
+    {
+      bool isck=ckcycleDfs(neigbour,vis,dfsvis,adj);
+      if(isck)
+      {
+        return true;
+      }
+    }  
+    else if(dfsvis[neigbour])
+    {
+        return true;
+    }
+
+    
+  }
+  dfsvis[node]=false;
+  return false;
+}
+bool detectCycleInDirectedGraph(int n, vector < pair < int, int >> & edges) {
+  // Write your code here.
+  unordered_map<int,list<int>> adj;
+  for(int i=0;i<edges.size();i++)
+  {
+    int u=edges[i].first;
+    int v=edges[i].second;
+
+    adj[u].push_back(v);
+    //adj[v].push_back(u);
+
+  }
+
+  unordered_map<int,bool> vis;
+  unordered_map<int,bool> dfsvis;
+
+  for(int i=1;i<=n;i++)
+  {
+    if(!vis[i])
+    {
+      bool iscycle=ckcycleDfs(i,vis,dfsvis,adj);
+      if(iscycle)
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
