@@ -1,0 +1,43 @@
+// coding ninja DFS Traversal https://www.naukri.com/code360/problems/dfs-traversal_630462?leftPanelTabValue=PROBLEM
+void DFS(int node,unordered_map<int,bool> &vis,unordered_map<int,list<int>> &adj,vector<int> &comp)
+{
+    comp.push_back(node);
+    vis[node]=true;
+
+    for(auto i:adj[node])
+    {
+        if(!vis[i])
+        {
+            DFS(i,vis,adj,comp);
+        }
+    }
+}
+
+vector<vector<int>> depthFirstSearch(int V, int E, vector<vector<int>> &edges)
+{
+    unordered_map<int,list<int>> adj;
+    for(int i=0;i<edges.size();i++)
+    {
+        int u=edges[i][0];
+        int v=edges[i][1];
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+
+    }
+
+    unordered_map<int,bool> vis;
+    vector<vector<int>> ans;
+    for(int i =0;i<adj.size();i++)
+    {
+        if(!vis[i])
+        {
+            vector<int> comp;
+            DFS(i,vis,adj,comp);
+            ans.push_back(comp);
+        }
+        
+    }
+    return ans;
+    // Write your code here
+}
