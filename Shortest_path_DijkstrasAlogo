@@ -1,0 +1,50 @@
+//shortest path in undirected graph using Dijkstra's Algorithm
+//CN:https://www.naukri.com/code360/problems/dijkstra-s-shortest-path_920469?leftPanelTabValue=SUBMISSION&count=25&page=1&search=dij&sort_entity=order&sort_order=ASC&customSource=studio_nav
+#include <bits/stdc++.h> 
+vector<int> dijkstra(vector<vector<int>> &vec, int vertices, int edges, int source) {
+    // Write your code here.
+    unordered_map<int,list<pair<int,int>>> adj;
+    for (int i=0;i<edges;i++)
+    {
+        int u=vec[i][0];
+        int v=vec[i][1];
+        int w=vec[i][2];
+
+        adj[u].push_back({v,w});
+        adj[v].push_back({u,w});
+    }
+
+    vector<int> dist(vertices);
+    for(int i=0;i<vertices;i++)
+    {
+        dist[i]=INT_MAX;
+    }
+
+    dist[source]=0;
+    set<pair<int,int>> st;
+
+    st.insert({dist[source],source});
+
+    while(!st.empty())
+    {
+        auto top = *(st.begin());
+
+        int disnode=top.first;
+        int topnode=top.second;
+        st.erase(st.begin());
+        for(auto nei:adj[topnode])
+        {
+            if(disnode+nei.second < dist[nei.first])
+            {
+                auto it = st.find({dist[nei.first], nei.first});
+                if (it != st.end()) st.erase(it);
+
+                dist[nei.first]=disnode+nei.second;
+                st.insert({dist[nei.first],nei.first});
+            }
+        }
+        
+    }
+    return dist;
+
+}
