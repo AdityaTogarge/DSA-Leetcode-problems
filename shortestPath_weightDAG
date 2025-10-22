@@ -1,0 +1,118 @@
+// Shortest path in dairected Acyclic weight graph
+
+#include<iostream>
+#include<list>
+#include<unordered_map>
+#include<stack>
+#include<limits.h>
+#include<vector>
+
+using namespace std;
+
+
+class Graph{
+    //int V;
+    //unordered_map<int,list<pair<int,int>>> adj;
+
+
+public:
+    int V;
+    unordered_map<int,list<pair<int,int>>> adj;
+    void addAdjlist(int u,int v,int wt)
+    {
+        adj[u].push_back({v,wt});
+    }
+
+    void PrintAdj()
+    {
+        for(auto i:adj)
+        {
+            cout<<i.first<<"->";
+            for(auto j:i.second)
+            {
+                cout<<"("<<j.first<<","<<j.second<<"),";
+            }
+            cout<<endl;
+        }
+    }
+
+    void topologicalSortUtil(int node,unordered_map<int,bool> &visited,stack<int> &s)
+    {
+        visited[node]=true;
+
+        for(auto neighbour:adj[node])
+        {
+            if(!visited[neighbour.first])
+            {
+                topologicalSortUtil(neighbour.first,visited,s);
+            }
+        }
+        s.push(node);
+    }
+
+    void getshortestPath(int src,vector<int> &dist,stack<int> &s)
+    {
+        dist[src]=0;
+
+        while(!s.empty())
+        {
+            int node = s.top();
+            s.pop();
+
+            if(dist[node]!=INT_MAX)
+            {
+                for(auto neighbour:adj[node])
+                {
+                    if(dist[node]+neighbour.second<dist[neighbour.first])
+                    {
+                        dist[neighbour.first]=dist[node]+neighbour.second;
+                    }
+                }
+            }
+        }
+    }
+};
+
+int main()
+{
+    int n=6;
+    Graph g;
+    g.addAdjlist(0,1,5);
+    g.addAdjlist(0,2,3);
+    g.addAdjlist(1,2,2);
+    g.addAdjlist(1,3,6);
+    g.addAdjlist(2,3,7);
+    g.addAdjlist(2,4,4);
+    g.addAdjlist(2,5,2);
+    g.addAdjlist(3,4,-1);
+    g.addAdjlist(4,5,-2);
+
+    g.PrintAdj();
+
+    unordered_map<int,bool> visited;
+    stack<int> s;
+
+    for(int i=0;i<n;i++)
+    {
+        if(!visited[i])
+        {
+            g.topologicalSortUtil(i,visited,s);
+        }
+    }
+    int src=1;
+    vector<int> dist(n);
+    for(int i=0;i<n;i++)
+    {
+        dist[i]=INT_MAX;
+    }
+    g.getshortestPath(src, dist,s);
+
+    cout << "Shortest distances from node " << src << ":\n";
+    for (int i = 0; i < dist.size(); i++) {
+            cout << dist[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
+
