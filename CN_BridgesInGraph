@@ -1,0 +1,74 @@
+//Bridges in graph coding ninja
+// https://www.naukri.com/code360/problems/bridges-in-graph_893026?leftPanelTabValue=SUBMISSION&count=25&search=bridges%20&sort_entity=order&sort_order=ASC&customSource=studio_nav&page=1
+
+#include<vector>
+#include<unordered_map>
+#include<list>
+
+void dfs(int node, int parent, int &timer,
+         unordered_map<int, bool> &vis,
+         vector<int> &dicv, vector<int> &low,
+         unordered_map<int, list<int>> &adj,
+         vector<vector<int>> &res)
+{
+    vis[node]=true;
+    dicv[node]=low[node]=timer++;
+
+    for(auto nbr:adj[node])
+    {
+        if(nbr == parent)
+        {
+            continue;
+        }
+
+        if(!vis[nbr])
+        {
+            dfs(nbr,node,timer,vis,dicv,low,adj,res);
+            low[node]=min(low[node],low[nbr]);
+
+            if(low[nbr]>dicv[node])
+            {
+                vector<int> ans;
+                ans.push_back(node);
+                ans.push_back(nbr);
+                res.push_back(ans);
+            }
+
+        }
+        else
+        {
+            low[node]=min(low[node],dicv[nbr]);
+        }
+    }
+}    
+vector<vector<int>> findBridges(vector<vector<int>> &edges, int v, int e) {
+    // Write your code here
+    unordered_map<int,list<int>> adj;
+    for(int i=0;i<edges.size();i++)
+    {
+        int u=edges[i][0];
+        int v=edges[i][1];
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    vector<int> dicv(v,-1);
+    vector<int> low(v,-1);
+    int timer=0;
+    int parent=-1;
+    unordered_map<int,bool> vis;
+
+    vector<vector<int>> res;
+
+    for(int i=0;i<v;i++)
+    {
+        if(!vis[i])
+        {
+            dfs(i,parent,timer,vis,dicv,low,adj,res);
+        }
+    }
+
+    return res;
+
+}
