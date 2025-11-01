@@ -1,0 +1,97 @@
+//Kosaraju's Algorithm for Strongly Connected Components 
+//https://www.naukri.com/code360/problems/count-strongly-connected-components-kosaraju-s-algorithm_1171151?leftPanelTabValue=SUBMISSION&count=25&search=count%20st&sort_entity=order&sort_order=ASC&customSource=studio_nav&page=1
+/*Kosaraju's Algorithm:
+🔹 Definition:
+
+Kosaraju’s Algorithm is a two-pass Depth First Search (DFS) based approach that identifies strongly connected components (SCCs) — groups of vertices where every vertex is reachable from every other vertex in the same group.
+
+🔹 Key Idea:
+
+Perform a DFS on the original graph and record the vertices in order of their finishing times (push them onto a stack).
+
+Transpose the graph (reverse the direction of all edges).
+
+Pop vertices from the stack one by one, and for each unvisited vertex, perform a DFS on the transposed graph.
+
+Each DFS call gives one Strongly Connected Component.
+
+🔹 Time Complexity:
+
+O(V + E) — where V is the number of vertices and E is the number of edges.*/
+
+#include<unordered_map>
+#include<vector>
+#include<list>
+#include<stack>
+
+void dfs(int node,unordered_map<int,bool> &vis,stack<int> &st,unordered_map<int,list<int>> &adj)
+{
+	vis[node]=true;
+	for(auto nbr:adj[node])
+	{
+		if(!vis[nbr])
+		{
+			dfs(nbr,vis,st,adj);
+		}
+	}
+	st.push(node);
+}
+void revDfs(int node,unordered_map<int,list<int>> &tp,unordered_map<int,bool> &vis)
+{
+	vis[node]=true;
+	for(auto nbr:tp[node])
+	{
+		if(!vis[nbr])
+		{
+			revDfs(nbr,tp,vis);
+		}
+	}
+}
+int stronglyConnectedComponents(int v, vector<vector<int>> &edges)
+{
+	// Write your code here.
+	unordered_map<int,list<int>> adj;
+	for(int i=0;i<edges.size();i++)
+	{
+		int u=edges[i][0];
+		int v=edges[i][1];
+
+		adj[u].push_back(v);
+	}
+
+	unordered_map<int,bool> vis;
+	stack<int> tpSort;
+
+	for(int i=0;i<v;i++)
+	{
+		if(!vis[i])
+		{
+			dfs(i,vis,tpSort,adj);
+		}
+	}
+
+	unordered_map<int,list<int>> transpose;
+
+	for(int i=0;i<v;i++)
+	{
+		vis[i]=0;
+		for(auto nbr:adj[i])
+		{
+			transpose[nbr].push_back(i);
+		}
+	}
+
+	int count=0;
+	while(!tpSort.empty())
+	{
+		int top=tpSort.top();
+		tpSort.pop();
+		if(!vis[top])
+		{
+			count++;
+			revDfs(top,transpose,vis);
+		}
+	}
+	return count;
+
+}
