@@ -1,0 +1,26 @@
+//shortest path using Belman Algorithm
+//he Bellman-Ford Algorithm is a single-source shortest path algorithm used to find the shortest distance from a given source vertex to all other vertices in a weighted graph (can include negative edge weights).
+
+//Unlike Dijkstra’s algorithm, Bellman-Ford can handle negative weights — but not negative weight cycles.
+//https://www.naukri.com/code360/problems/bellmon-ford_2041977?leftPanelTabValue=SUBMISSION&count=25&search=bell&sort_entity=order&sort_order=ASC&customSource=studio_nav
+
+#include <vector>
+vector<int> bellmonFord(int n, int m, int src, vector<vector<int>> &edges) {
+    vector<int> dist(n + 1, 1e8); // initialize distances to 10^8
+    dist[src] = 0;
+
+    // Relax all edges (n - 1) times
+    for (int i = 1; i <n; i++) {
+        for (int j = 0; j < m; j++) {
+            int u = edges[j][0];
+            int v = edges[j][1];
+            int wt = edges[j][2];
+
+            if (dist[u] + wt < dist[v]) {
+                dist[v] = dist[u] + wt;
+            }
+        }
+    }
+
+    return dist;
+}   
